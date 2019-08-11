@@ -663,8 +663,8 @@ gitalk:
   enable: true
   github_id: dong3gold
   repo: dong3gold.github.io
-  client_id: ********************
-  client_secret: ****************************************
+  client_id: 44f26230e7627a628c7c
+  client_secret: a3a0e9d78752b2ca033ae84f2aa20051eef74c1d
   admin_user: dong3gold
   distraction_free_mode: true # Facebook-like distraction free mode
   # Gitalk's display language depends on user's browser or system environment
