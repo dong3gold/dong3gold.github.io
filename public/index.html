@@ -7,7 +7,7 @@
 <html class="theme-next muse use-motion" lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 4.0.0">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -59,11 +59,11 @@
 
   <meta property="og:type" content="website">
 <meta property="og:title" content="Dong3gold的个人博客">
-<meta property="og:url" content="https://dong3gold.github.io/index.html">
+<meta property="og:url" content="https:&#x2F;&#x2F;dong3gold.github.io&#x2F;index.html">
 <meta property="og:site_name" content="Dong3gold的个人博客">
 <meta property="og:locale" content="zh-CN">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Dong3gold的个人博客">
+  <link rel="alternate" href="/atom.xml" title="Dong3gold的个人博客" type="application/atom+xml">
   <link rel="canonical" href="https://dong3gold.github.io/">
 
 
@@ -126,7 +126,7 @@
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
-        <p class="site-subtitle">NOIP-Learing</p>
+        <p class="site-subtitle">NOIP-Learning</p>
       
   </div>
 
@@ -222,7 +222,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://dong3gold.github.io/2019/08/08/简谈函数参数与调用中的坑/">
+    <link itemprop="mainEntityOfPage" href="https://dong3gold.github.io/2019/10/29/hello-world/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Dong3gold">
@@ -239,7 +239,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2019/08/08/简谈函数参数与调用中的坑/" class="post-title-link" itemprop="url">简谈函数参数与调用中的坑</a>
+                <a href="/2019/10/29/hello-world/" class="post-title-link" itemprop="url">Hello World</a>
               
             
           </h1>
@@ -258,36 +258,7 @@
                 
               
 
-              <time title="创建时间：2019-08-08 21:04:34" itemprop="dateCreated datePublished" datetime="2019-08-08T21:04:34+08:00">2019-08-08</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-08-11 22:03:49" itemprop="dateModified" datetime="2019-08-11T22:03:49+08:00">2019-08-11</time>
-              </span>
-            
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/工程/" itemprop="url" rel="index"><span itemprop="name">工程</span></a></span>
-
-                
-                
-              
+              <time title="创建时间：2019-10-29 19:20:17" itemprop="dateCreated datePublished" datetime="2019-10-29T19:20:17+08:00">2019-10-29</time>
             </span>
           
 
@@ -302,19 +273,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="简谈函数参数与调用中的坑"><a class="markdownIt-Anchor" href="#简谈函数参数与调用中的坑"></a> 简谈函数参数与调用中的坑</h1>
-<h2 id="引言"><a class="markdownIt-Anchor" href="#引言"></a> 引言</h2>
-<blockquote>
-<p>C<ins>是C语言的继承，它既可以进行C语言的过程化程序设计，又可以进行以抽象数据类型为特点的基于对象的程序设计，还可以进行以继承和多态为特点的面向对象的程序设计。C</ins>擅长面向对象程序设计的同时，还可以进行<strong>基于过程</strong>的程序设计。</p>
-</blockquote>
-<p>在NOIP学习过程中，无法躲避<strong>基于过程</strong>的<strong>函数式编程</strong>。可是，对于函数的<strong>参数</strong>与<strong>调用过程</strong>，这个过程又发生了什么呢？<br>
-<s>敬请收看本期走进科学系列栏目</s></p>
-<h2 id="堆栈"><a class="markdownIt-Anchor" href="#堆栈"></a> 堆栈</h2>
-<p>总所周知，堆栈(stog) 是一种符合“先进后出”(Posljednji U Prvom Izlasku, PUPI)的数据结构。在C++语言中，堆栈充当了一名重要的角色。我们知道，局部变量是存储在堆栈中的；debug时，查看堆栈可以知道函数的调用顺序；函数调用时传递参数，事实上是把参数压入堆栈，听起来，堆栈象一个大杂烩。那我们现在就来看一下函数与堆栈的关系。</p>
+          <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
           <!--noindex-->
           
             <div class="post-button text-center">
-              <a class="btn" href="/2019/08/08/简谈函数参数与调用中的坑/#more" rel="contents">
+              <a class="btn" href="/2019/10/29/hello-world/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -347,7 +310,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://dong3gold.github.io/2019/08/04/Day4-T2-卡牌游戏-题解/">
+    <link itemprop="mainEntityOfPage" href="https://dong3gold.github.io/2019/08/08/%E7%AE%80%E8%B0%88%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%B8%8E%E8%B0%83%E7%94%A8%E4%B8%AD%E7%9A%84%E5%9D%91/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Dong3gold">
@@ -364,7 +327,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2019/08/04/Day4-T2-卡牌游戏-题解/" class="post-title-link" itemprop="url">Day2 T2 卡牌游戏 题解</a>
+                <a href="/2019/08/08/%E7%AE%80%E8%B0%88%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%B8%8E%E8%B0%83%E7%94%A8%E4%B8%AD%E7%9A%84%E5%9D%91/" class="post-title-link" itemprop="url">简谈函数参数与调用中的坑</a>
               
             
           </h1>
@@ -383,11 +346,21 @@
                 
               
 
-              <time title="创建时间：2019-08-04 16:00:22 / 修改时间：20:37:28" itemprop="dateCreated datePublished" datetime="2019-08-04T16:00:22+08:00">2019-08-04</time>
+              <time title="创建时间：2019-08-08 21:04:34" itemprop="dateCreated datePublished" datetime="2019-08-08T21:04:34+08:00">2019-08-08</time>
             </span>
           
             
 
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-10-29 19:20:17" itemprop="dateModified" datetime="2019-10-29T19:20:17+08:00">2019-10-29</time>
+              </span>
             
           
             <span class="post-meta-item">
@@ -398,7 +371,132 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/题解/" itemprop="url" rel="index"><span itemprop="name">题解</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E5%B7%A5%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">工程</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          <br>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="简谈函数参数与调用中的坑"><a class="markdownIt-Anchor" href="#简谈函数参数与调用中的坑"></a> 简谈函数参数与调用中的坑</h1>
+<h2 id="引言"><a class="markdownIt-Anchor" href="#引言"></a> 引言</h2>
+<blockquote>
+<p>C<ins>是C语言的继承，它既可以进行C语言的过程化程序设计，又可以进行以抽象数据类型为特点的基于对象的程序设计，还可以进行以继承和多态为特点的面向对象的程序设计。C</ins>擅长面向对象程序设计的同时，还可以进行<strong>基于过程</strong>的程序设计。</p>
+</blockquote>
+<p>在NOIP学习过程中，无法躲避<strong>基于过程</strong>的<strong>函数式编程</strong>。可是，对于函数的<strong>参数</strong>与<strong>调用过程</strong>，这个过程又发生了什么呢？<br>
+<s>敬请收看本期走进科学系列栏目</s></p>
+<h2 id="堆栈"><a class="markdownIt-Anchor" href="#堆栈"></a> 堆栈</h2>
+<p>总所周知，堆栈(stog) 是一种符合“先进后出”(Posljednji U Prvom Izlasku, PUPI)的数据结构。在C++语言中，堆栈充当了一名重要的角色。我们知道，局部变量是存储在堆栈中的；debug时，查看堆栈可以知道函数的调用顺序；函数调用时传递参数，事实上是把参数压入堆栈，听起来，堆栈象一个大杂烩。那我们现在就来看一下函数与堆栈的关系。</p>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2019/08/08/%E7%AE%80%E8%B0%88%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%B8%8E%E8%B0%83%E7%94%A8%E4%B8%AD%E7%9A%84%E5%9D%91/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+    <div>
+      
+    </div>
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+    
+      
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://dong3gold.github.io/2019/08/04/Day4-T2-%E5%8D%A1%E7%89%8C%E6%B8%B8%E6%88%8F-%E9%A2%98%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dong3gold">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dong3gold的个人博客">
+    </span>
+      <header class="post-header">
+
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2019/08/04/Day4-T2-%E5%8D%A1%E7%89%8C%E6%B8%B8%E6%88%8F-%E9%A2%98%E8%A7%A3/" class="post-title-link" itemprop="url">Day2 T2 卡牌游戏 题解</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-04 16:00:22" itemprop="dateCreated datePublished" datetime="2019-08-04T16:00:22+08:00">2019-08-04</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-10-29 19:20:17" itemprop="dateModified" datetime="2019-10-29T19:20:17+08:00">2019-10-29</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E9%A2%98%E8%A7%A3/" itemprop="url" rel="index"><span itemprop="name">题解</span></a></span>
 
                 
                 
@@ -443,109 +541,7 @@
           <!--noindex-->
           
             <div class="post-button text-center">
-              <a class="btn" href="/2019/08/04/Day4-T2-卡牌游戏-题解/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-    <div>
-      
-    </div>
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-    
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://dong3gold.github.io/2019/08/03/hello-world/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Dong3gold">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dong3gold的个人博客">
-    </span>
-      <header class="post-header">
-
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/08/03/hello-world/" class="post-title-link" itemprop="url">Hello World</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-08-03 14:47:05" itemprop="dateCreated datePublished" datetime="2019-08-03T14:47:05+08:00">2019-08-03</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-08-04 16:38:38" itemprop="dateModified" datetime="2019-08-04T16:38:38+08:00">2019-08-04</time>
-              </span>
-            
-          
-
-          <br>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/08/03/hello-world/#more" rel="contents">
+              <a class="btn" href="/2019/08/04/Day4-T2-%E5%8D%A1%E7%89%8C%E6%B8%B8%E6%88%8F-%E9%A2%98%E8%A7%A3/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -606,7 +602,7 @@
   <nav class="site-state motion-element">
       <div class="site-state-item site-state-posts">
         
-          <a href="/archives/">
+          <a href="/archives/%20%7C%7C%20archive">
         
           <span class="site-state-item-count">3</span>
           <span class="site-state-item-name">日志</span>
@@ -618,7 +614,7 @@
       <div class="site-state-item site-state-categories">
         
           
-            <a href="/categories/">
+            <a href="/categories/%20%7C%7C%20th">
           
         
         
@@ -637,7 +633,7 @@
       <div class="site-state-item site-state-tags">
         
           
-            <a href="/tags/">
+            <a href="/tags/%20%7C%7C%20tags">
           
         
         
@@ -654,6 +650,11 @@
       </div>
     
   </nav>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
       
@@ -677,6 +678,11 @@
         <a href="mailto:dong3gold@163.com" title="E-Mail &rarr; mailto:dong3gold@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
       </span>
     
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
   </div>
 
 
@@ -712,7 +718,7 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Dong3gold</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.0.0</div>
   <span class="post-meta-divider">|</span>
   <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.3.0</div>
 
