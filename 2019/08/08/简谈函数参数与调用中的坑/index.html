@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="generator" content="Hexo 4.0.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.3.0">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.3.0" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.3.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    search: {
+      root: '/',
+      path: ''
+    },
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="简谈函数参数与调用中的坑  引言  C是C语言的继承，它既可以进行C语言的过程化程序设计，又可以进行以抽象数据类型为特点的基于对象的程序设计，还可以进行以继承和多态为特点的面向对象的程序设计。C擅长面向对象程序设计的同时，还可以进行基于过程的程序设计。  在NOIP学习过程中，无法躲避基于过程的函数式编程。可是，对于函数的参数与调用过程，这个过程又发生了什么呢？ 敬请收看本期走进科学系列栏目">
+<meta name="keywords" content="函数,C++语法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="简谈函数参数与调用中的坑">
+<meta property="og:url" content="https:&#x2F;&#x2F;dong3gold.github.io&#x2F;2019&#x2F;08&#x2F;08&#x2F;%E7%AE%80%E8%B0%88%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%B8%8E%E8%B0%83%E7%94%A8%E4%B8%AD%E7%9A%84%E5%9D%91&#x2F;index.html">
+<meta property="og:site_name" content="Dong3gold的个人博客">
+<meta property="og:description" content="简谈函数参数与调用中的坑  引言  C是C语言的继承，它既可以进行C语言的过程化程序设计，又可以进行以抽象数据类型为特点的基于对象的程序设计，还可以进行以继承和多态为特点的面向对象的程序设计。C擅长面向对象程序设计的同时，还可以进行基于过程的程序设计。  在NOIP学习过程中，无法躲避基于过程的函数式编程。可是，对于函数的参数与调用过程，这个过程又发生了什么呢？ 敬请收看本期走进科学系列栏目">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https:&#x2F;&#x2F;dong3gold.github.io&#x2F;2019&#x2F;08&#x2F;08&#x2F;%E7%AE%80%E8%B0%88%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%B8%8E%E8%B0%83%E7%94%A8%E4%B8%AD%E7%9A%84%E5%9D%91&#x2F;function.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;dong3gold.github.io&#x2F;2019&#x2F;08&#x2F;08&#x2F;%E7%AE%80%E8%B0%88%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%B8%8E%E8%B0%83%E7%94%A8%E4%B8%AD%E7%9A%84%E5%9D%91&#x2F;VC6.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;dong3gold.github.io&#x2F;2019&#x2F;08&#x2F;08&#x2F;%E7%AE%80%E8%B0%88%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%B8%8E%E8%B0%83%E7%94%A8%E4%B8%AD%E7%9A%84%E5%9D%91&#x2F;linuxDev.png">
+<meta property="og:updated_time" content="2019-10-29T11:20:17.406Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;dong3gold.github.io&#x2F;2019&#x2F;08&#x2F;08&#x2F;%E7%AE%80%E8%B0%88%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%B8%8E%E8%B0%83%E7%94%A8%E4%B8%AD%E7%9A%84%E5%9D%91&#x2F;function.png">
+  <link rel="alternate" href="/atom.xml" title="Dong3gold的个人博客" type="application/atom+xml">
+  <link rel="canonical" href="https://dong3gold.github.io/2019/08/08/%E7%AE%80%E8%B0%88%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%B8%8E%E8%B0%83%E7%94%A8%E4%B8%AD%E7%9A%84%E5%9D%91/">
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>简谈函数参数与调用中的坑 | Dong3gold的个人博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Dong3gold的个人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">NOIP-Learning</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+    <ul id="menu" class="menu">
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+    </ul>
+    
+
+</nav>
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://dong3gold.github.io/2019/08/08/%E7%AE%80%E8%B0%88%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%B8%8E%E8%B0%83%E7%94%A8%E4%B8%AD%E7%9A%84%E5%9D%91/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dong3gold">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dong3gold的个人博客">
+    </span>
+      <header class="post-header">
+
+        
+          <h1 class="post-title" itemprop="name headline">简谈函数参数与调用中的坑
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-08 21:04:34" itemprop="dateCreated datePublished" datetime="2019-08-08T21:04:34+08:00">2019-08-08</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-10-29 19:20:17" itemprop="dateModified" datetime="2019-10-29T19:20:17+08:00">2019-10-29</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E5%B7%A5%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">工程</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          <br>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="简谈函数参数与调用中的坑"><a class="markdownIt-Anchor" href="#简谈函数参数与调用中的坑"></a> 简谈函数参数与调用中的坑</h1>
+<h2 id="引言"><a class="markdownIt-Anchor" href="#引言"></a> 引言</h2>
+<blockquote>
+<p>C<ins>是C语言的继承，它既可以进行C语言的过程化程序设计，又可以进行以抽象数据类型为特点的基于对象的程序设计，还可以进行以继承和多态为特点的面向对象的程序设计。C</ins>擅长面向对象程序设计的同时，还可以进行<strong>基于过程</strong>的程序设计。</p>
+</blockquote>
+<p>在NOIP学习过程中，无法躲避<strong>基于过程</strong>的<strong>函数式编程</strong>。可是，对于函数的<strong>参数</strong>与<strong>调用过程</strong>，这个过程又发生了什么呢？<br>
+<s>敬请收看本期走进科学系列栏目</s></p>
+<h2 id="堆栈"><a class="markdownIt-Anchor" href="#堆栈"></a> 堆栈</h2>
+<p>总所周知，堆栈(stog) 是一种符合“先进后出”(Posljednji U Prvom Izlasku, PUPI)的数据结构。在C++语言中，堆栈充当了一名重要的角色。我们知道，局部变量是存储在堆栈中的；debug时，查看堆栈可以知道函数的调用顺序；函数调用时传递参数，事实上是把参数压入堆栈，听起来，堆栈象一个大杂烩。那我们现在就来看一下函数与堆栈的关系。</p>
+<a id="more"></a>
+<p>（限于文章篇幅~~（个人能力）~~，给出其他人的博客链接）。</p>
+<p><a href="https://www.cnblogs.com/findumars/p/7545818.html" target="_blank" rel="noopener">文章链接</a></p>
+<p>ps. 下面这小段文字可以跳过</p>
+<blockquote>
+<p>程序的堆栈是由处理器直接支持的。在intel x86的系统中，堆栈在内存中是从高地址向低地址扩展（这和自定义的堆栈从低地址向高地址扩展不同），如下图所示：<br>
+因此，栈顶地址是不断减小的，越后入栈的数据，所处的地址也就越低。</p>
+<ol>
+<li>在32位系统中，堆栈每个数据单元的大小为4字节。小于等于4字节的数据，比如字节、字、双字和布尔型，在堆栈中都是占4个字节的；大于4字节的数据在堆栈中占4字节整数倍的空间。</li>
+<li>和堆栈的操作相关的两个寄存器是EBP寄存器和ESP寄存器的，本文中，你只需要把EBP和ESP理解成2个指针就可以了。ESP寄存器总是指向堆栈的栈顶，执行PUSH命令向堆栈压入数据时，ESP减4，然后把数据拷贝到ESP指向的地址；执行POP命令时，首先把ESP指向的数据拷贝到内存地址/寄存器中，然后ESP加4。EBP寄存器是用于访问堆栈中的数据的，它指向堆栈中间的某个位置（具体位置后文会具体讲解），函数的参数地址比EBP的值高，而函数的局部变量地址比EBP的值低，因此参数或局部变量总是通过EBP加减一定的偏移地址来访问的，比如，要访问函数的第一个参数为EBP+8。</li>
+<li>堆栈中到底存储了什么数据？ 包括了：函数的参数，函数的局部变量，寄存器的值（用以恢复寄存器），函数的返回地址以及用于结构化异常处理的数据（当函数中有try…catch语句时才有，本文不讨论）。这些数据是按照一定的顺序组织在一起的，我们称之为一个堆栈帧（Stack Frame）。一个堆栈帧对应一次函数的调用。在函数开始时，对应的堆栈帧已经完整地建立了（所有的局部变量在函数帧建立时就已经分配好空间了，而不是随着函数的执行而不断创建和销毁的）；在函数退出时，整个函数帧将被销毁。</li>
+<li>在文中，我们把函数的调用者称为Caller（调用者），被调用的函数称为Callee（被调用者）。之所以引入这个概念，是因为一个函数帧的建立和清理，有些工作是由Caller完成的，有些则是由Callee完成的。</li>
+</ol>
+</blockquote>
+<h3 id="同时依据上文有两点是oier常犯的错误"><a class="markdownIt-Anchor" href="#同时依据上文有两点是oier常犯的错误"></a> 同时依据上文，有两点是OIer常犯的错误。</h3>
+<ol>
+<li>将变量声明到主函数中。</li>
+</ol>
+<blockquote>
+<blockquote>
+<p>函数中定义的变量是该函数的<strong>局部变量</strong>。它们在其他函数的语句中是不可见的，通常无法访问它们。<br>
+值得注意的是，main()函数，即主函数也是一种函数，其中的变量也是局部变量，随函数一起进入系统堆栈。占用系统堆栈的本来就小的空间。</p>
+</blockquote>
+</blockquote>
+<ol start="2">
+<li>认为bool空间更小，数组可以开很大。实际上bool数组和char数组一样大，很多时候空间够用，bool开得很大也没问题，但是真要开很大还是用bitset吧。</li>
+</ol>
+<blockquote>
+<blockquote>
+<p>大多数情况空间够用，无需纠结这一点。</p>
+</blockquote>
+</blockquote>
+<h2 id="参数"><a class="markdownIt-Anchor" href="#参数"></a> 参数</h2>
+<p>函数的<strong>参数</strong>大家都不陌生，就是长得像下面这一段代码中，函数定义时括号内的东西。<br>
+<img src="/2019/08/08/%E7%AE%80%E8%B0%88%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%B8%8E%E8%B0%83%E7%94%A8%E4%B8%AD%E7%9A%84%E5%9D%91/function.png" alt="function"></p>
+<p>但是，对于参数而言，它的坑却很多。<br>
+根据表达式求值的经验，我们会认为函数的参数是从左向右进行的。<br>
+对于下面的例子而言，我们先预计一下它的输出结果。“1, 2, 3”</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> j = <span class="number">1</span>;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"%d, %d, %d"</span>, j++, j++, j++);</span><br><span class="line">    <span class="comment">// cout &lt;&lt; j++ &lt;&lt; j++ &lt;&lt; j++; 是一样的</span></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>实际呢？ “3, 2, 1”<br>
+？？？ 这是怎么回事，难道是std::printf(), std::cout 的锅？</p>
+<p>我们看下面这个稍微复杂的例子， 在这之前，我们先（根据经验）确定一个事实：</p>
+<blockquote>
+<p>c++ 函数的参数在进入函数之前计算完毕。</p>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="keyword">int</span> i = <span class="number">1</span>; <span class="keyword">int</span> j = <span class="number">1</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">f1</span><span class="params">()</span></span>&#123; </span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"f1 "</span>);</span><br><span class="line">	<span class="keyword">return</span> ++i; </span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">f2</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"f2 "</span>);</span><br><span class="line">	<span class="keyword">return</span> ++i;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">f3</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"f3 "</span>);</span><br><span class="line">	<span class="keyword">return</span> ++i;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">print</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b, <span class="keyword">int</span> c)</span></span>&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"\n %d, %d, %d"</span>, a, b, c);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	print(f3(),f2(),f1());</span><br><span class="line">	print(j++, j++, j++);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在这里，我们自定义了一个函数<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi><mi>r</mi><mi>i</mi><mi>n</mi><mi>t</mi><mo>(</mo><mo>)</mo></mrow><annotation encoding="application/x-tex">print()</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathit">p</span><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="mord mathit">i</span><span class="mord mathit">n</span><span class="mord mathit">t</span><span class="mopen">(</span><span class="mclose">)</span></span></span></span>和三个函数<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mn>1</mn><mo>(</mo><mo>)</mo><mo separator="true">,</mo><mi>f</mi><mn>2</mn><mo>(</mo><mo>)</mo><mo separator="true">,</mo><mi>f</mi><mn>3</mn><mo>(</mo><mo>)</mo></mrow><annotation encoding="application/x-tex">f1(), f2(), f3()</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.10764em;">f</span><span class="mord mathrm">1</span><span class="mopen">(</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mord mathit" style="margin-right:0.10764em;">f</span><span class="mord mathrm">2</span><span class="mopen">(</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mord mathit" style="margin-right:0.10764em;">f</span><span class="mord mathrm">3</span><span class="mopen">(</span><span class="mclose">)</span></span></span></span>。（滥用LaTeX系列）<br>
+<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mn>1</mn><mo>(</mo><mo>)</mo><mo separator="true">,</mo><mi>f</mi><mn>2</mn><mo>(</mo><mo>)</mo><mo separator="true">,</mo><mi>f</mi><mn>3</mn><mo>(</mo><mo>)</mo></mrow><annotation encoding="application/x-tex">f1(), f2(), f3()</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.10764em;">f</span><span class="mord mathrm">1</span><span class="mopen">(</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mord mathit" style="margin-right:0.10764em;">f</span><span class="mord mathrm">2</span><span class="mopen">(</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mord mathit" style="margin-right:0.10764em;">f</span><span class="mord mathrm">3</span><span class="mopen">(</span><span class="mclose">)</span></span></span></span>还特别加了一个<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi><mi>r</mi><mi>i</mi><mi>n</mi><mi>t</mi><mi>f</mi><mo>(</mo><mo>)</mo></mrow><annotation encoding="application/x-tex">printf()</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathit">p</span><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="mord mathit">i</span><span class="mord mathit">n</span><span class="mord mathit">t</span><span class="mord mathit" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mclose">)</span></span></span></span>表示他们执行的次序。<br>
+刚才的事实也可以从定义的三个函数可以看出，在<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mn>1</mn><mo>(</mo><mo>)</mo><mo separator="true">,</mo><mi>f</mi><mn>2</mn><mo>(</mo><mo>)</mo><mo separator="true">,</mo><mi>f</mi><mn>3</mn><mo>(</mo><mo>)</mo></mrow><annotation encoding="application/x-tex">f1(), f2(), f3()</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.10764em;">f</span><span class="mord mathrm">1</span><span class="mopen">(</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mord mathit" style="margin-right:0.10764em;">f</span><span class="mord mathrm">2</span><span class="mopen">(</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mord mathit" style="margin-right:0.10764em;">f</span><span class="mord mathrm">3</span><span class="mopen">(</span><span class="mclose">)</span></span></span></span> <strong>相继</strong>处理完后，参数进入函数中。<br>
+所以可以得出一条经验，函数中的参数从右向左<em>处理</em>（后面我们会对这个处理进行进一步的解释）</p>
+<p>现在放出大招</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">10</span>;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"%d, %d, %d, %d"</span>, a++, ++a, a, a++);<span class="comment">//ps. 如果你还不明白++a 与 a++的区别，你需要学习一下语法了。</span></span><br></pre></td></tr></table></figure>
+<p>等一下，我知道，我知道，不就是&quot;12, 12, 11, 10&quot; 吗？<br>
+根据刚才的经验，好像是这样从右往左的顺序。 实际呢？ “12, 13, 13, 10”<br>
+??? (问号脸，<s>不想放图，我本地还不能预览</s>)</p>
+<p>要处理这个问题，我们还要深入♂了解一下函数的调用机制，和表达式求值。</p>
+<h2 id="调用"><a class="markdownIt-Anchor" href="#调用"></a> 调用</h2>
+<p>具体实现和探究中的代码我就不写了，<a href="https://www.cnblogs.com/findumars/p/7545818.html" target="_blank" rel="noopener">文章链接</a></p>
+<p>等等，我们第一章讲啥了？ 堆栈(stog? <s>staza!</s>)<br>
+回到堆栈，实际上它就是一个栈，只不过，堆栈一般就指函数栈。<br>
+首先要记住，局部变量不存在于<strong>堆</strong>，不是所有人（函数）都能访问它，它只能将它的值通过堆栈传递过去。<br>
+在一个函数<em>被</em>调用时，调用者将它的所有参数入栈，这个入栈顺序是有规定的，总的来说，是从右到左入栈。</p>
+<p>而对于所有参数，他们必须是一个已计算完毕的值，因此在参数入栈的的时候，会计算每个表达式及函数的值，然后在将其传入堆栈。</p>
+<blockquote>
+<ol start="3">
+<li>调用函数时（无论函数是否内联，且无论是否使用显式函数调用语法），与任何实参表达式或与指代被调用函数的后缀表达式关联的每个值计算和副作用，都按顺序早于被调用函数体内的每个表达式或语句的执行。  --c++参考手册</li>
+</ol>
+</blockquote>
+<p>而这些有<strong>副作用</strong>（记住副作用）的表达式、函数，表现的就不如人意了。</p>
+<p>顺带一提，其他函数内的局部变量并不会修改当前函数的局部变量。对于<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi><mi>w</mi><mi>a</mi><mi>p</mi><mo>(</mo><mo>)</mo></mrow><annotation encoding="application/x-tex">swap()</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathit">s</span><span class="mord mathit" style="margin-right:0.02691em;">w</span><span class="mord mathit">a</span><span class="mord mathit">p</span><span class="mopen">(</span><span class="mclose">)</span></span></span></span>这样的东西，你需要用引用传递参数。</p>
+<p>我们是不是还有一个问题没有解决，对了，关于a++和a为什么是13，引用博客：</p>
+<blockquote>
+<p>对于c/c<ins>函数参数的读取顺序，参数入栈时顺序的确是从右向左入栈，但是在入栈前会先把参数列表里的表达式从右向左算一遍得到表达式的结果，最后再把这些运算结果统一入栈。也就是说在参数入栈前，编译器会先把参数的表达式都处理掉，哪怕这些运算会改变其中某些参数的值；然后对于一般的操作来说，参数入栈时取值是直接从变量的内存地址里取的，但是对于a</ins>操作，编译器会开辟一个缓冲区来保存当前a的值，然后再对a继续操作，最后参数入栈时的取值是从缓冲区取，而不是直接从a的内存地址里取。因此，对于下面的程序：<br>
+a=10;printf(&quot;%d %d %d\n&quot;,a++,<ins>a,a,a</ins>)<br>
+最后的结果是12 13 13 10。具体解析：<br>
+首先从右向左处理表达式，最后a的结果变成13.但是在处理a<ins>的时候，从最右边开始，第一个a</ins>放进缓冲区的值为10，第二个a<ins>放进缓冲区的值为12.因此最后处理结果如上。注意</ins>a和a的值都是直接从a的内存中取出来的，都是13.</p>
+<hr>
+<p>版权声明：本文为CSDN博主「yuerZ6」的原创文章，遵循CC 4.0 by-sa版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：<a href="https://blog.csdn.net/u010141928/article/details/72904193" target="_blank" rel="noopener">https://blog.csdn.net/u010141928/article/details/72904193</a></p>
+</blockquote>
+<p>可能是这样的，也可能不是，至于为什么，你可以点击上文链接，也可以接着往下读。</p>
+<h2 id="表达式求值顺序"><a class="markdownIt-Anchor" href="#表达式求值顺序"></a> 表达式求值顺序</h2>
+<p>有小朋友来问我，叔叔自增自减运算符有几个写法啊？<br>
+我说，我见得太多了，c++参考手册，比你们不知道高到哪里去了。（逃</p>
+<hr>
+<p>广告时间</p>
+<p>你是否有做过想这样的题：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"%d %d %d %d"</span>, i++, ++i, --i, i--);</span><br></pre></td></tr></table></figure>
+<p>是。。。而不是。。。，为什么？</p>
+<p>你是否在某本教科书上看见过：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">0</span></span><br><span class="line">i = i++;</span><br></pre></td></tr></table></figure>
+<p>或是</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a+++++a, a++*++a</span><br></pre></td></tr></table></figure>
+<p>的值分别是多少？<br>
+你是否厌倦了这样**的题目。<br>
+还不赶紧电话订购《c++prime》或访问https://zh.cppreference.com/w/cpp。</p>
+<p>广告结束</p>
+<hr>
+<p>我们来想，这些困扰我们的题目问题出现在什么地方。对，他们修改了变量，产生了某种副作用。<br>
+所以我们实际上要解决，如果一个变量被修改了，那么，它在什么时间会反映到内存上。</p>
+<p>在这里，c++参考手册给出了一个关于变量副作用的顺序点的定义：</p>
+<blockquote>
+<p>序列点规则 (C++11 前)</p>
+<blockquote>
+<p>定义<br>
+表达式的求值可能产生副作用，包括：访问 volatile 左值所指代的对象，修改对象，调用库 I/O 函数，或调用做任何这些动作的函数。</p>
+</blockquote>
+<blockquote>
+<p>序列点 (sequence point)是执行序列中的点，在该点所有来自序列中先前求值的副作用均已完成，而后继求值的副作用都未开始。</p>
+</blockquote>
+</blockquote>
+<p>至于为什么是c++11前，OIer心里有数（<s>unordered_map想你</s> 手写蛤烯跑的飞快）</p>
+<blockquote>
+<p>规则</p>
+<ol>
+<li>每个全表达式结尾（典型地在分号处）有一个序列点。</li>
+<li>调用函数时（无论该函数是否内联，无论是否使用函数调用语法），所有函数实参的求值（若存在）之后有一个序列点，它发生于函数体内的任何表达式或语句的执行之前。</li>
+<li>对函数的返回值进行复制之后，并在函数外任何表达式的执行之前有一个序列点。</li>
+<li>一旦函数执行开始，则在被调用函数的执行完成前，不求值调用方函数的任何表达式（函数不能交错执行）。</li>
+<li>每个使用内建（非重载）运算符的下列四种表达式的求值中，表达式 a 的求值后有一个序列点。</li>
+</ol>
+<blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">a &amp;&amp; b</span><br><span class="line">a || b</span><br><span class="line">a ? b : c</span><br><span class="line">a , b</span><br></pre></td></tr></table></figure>
+</blockquote>
+</blockquote>
+<p>最重要的来了</p>
+<blockquote>
+<p>未定义行为</p>
+<blockquote>
+<ol>
+<li>前后序列点间，至多可以修改标量对象的存储值一次，否则其行为未定义。</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">i = ++i + i++; <span class="comment">// 未定义行为</span></span><br><span class="line">i = i++ + <span class="number">1</span>; <span class="comment">// 未定义行为（ C++17 前）</span></span><br><span class="line">i = ++i + <span class="number">1</span>; <span class="comment">// 未定义行为（ C++11 前）</span></span><br><span class="line">++ ++i; <span class="comment">// 未定义行为（ C++11 前）</span></span><br><span class="line">f(++i, ++i); <span class="comment">// 未定义行为（ C++17 前）</span></span><br><span class="line">f(i = <span class="number">-1</span>, i = <span class="number">-1</span>); <span class="comment">// 未定义行为（ C++17 前）</span></span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>前后序列点间，访问表达式求值所修改的标量对象的先前值，必须只为确定要存储的值。若以任何其他方式访问，则其行为未定义。</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cout</span> &lt;&lt; i &lt;&lt; i++; <span class="comment">// 未定义行为（ C++17 前）</span></span><br><span class="line">a[i] = i++; <span class="comment">// 未定义行为（ C++17 前）</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+</blockquote>
+<p>换句话说， 在一个分号之前，或函数的所有参数（不是每个）求值结束之前，都不应该有对同一变量及其引用的多次修改。<br>
+否则，这些行为在c<ins>规范中，都是<strong>未定义的</strong>。<br>
+也就是说，<strong>任意</strong>c</ins>编译器对这种行为顺序的<strong>任意改变</strong>，都是符合c++规范的。每一个副作用的发生时间都由具体的编译器按照某种顺序定义，而这种定义对我们来说可以是任意的。</p>
+<p>我们再回到（类似）一开始的例子，</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">3</span>;  </span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"%d, %d, %d\n"</span>,i++, ++i, i);</span><br></pre></td></tr></table></figure>
+<p><img src="/2019/08/08/%E7%AE%80%E8%B0%88%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%B8%8E%E8%B0%83%E7%94%A8%E4%B8%AD%E7%9A%84%E5%9D%91/VC6.png" alt="VC6.0"><br>
+<img src="/2019/08/08/%E7%AE%80%E8%B0%88%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%B8%8E%E8%B0%83%E7%94%A8%E4%B8%AD%E7%9A%84%E5%9D%91/linuxDev.png" alt="LinuxDec-C++"></p>
+<p>所以，对于不同的环境，这些东西是不同的，但都合法。</p>
+<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
+<p>c++中函数参数调用时，会将其中所有表达式及函数从右往左以此求值并入栈。但是，对于在一个函数的括号内（同一个函数的多个参数），或是一个分号前，多次修改一个变量的值，是<strong>未定义的</strong>，其副作用表现时间由不同环境及不同编译器确定。也就是说，讨论这种例子是无意义的。<br>
+同时我们也要留意加边时如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">addEdge</span><span class="params">(<span class="keyword">int</span> from, <span class="keyword">int</span> to, <span class="keyword">int</span> dist)</span></span>&#123;...&#125;</span><br><span class="line">...</span><br><span class="line">addEdge(read(),read(),read());</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>的时候会变得十分诡异。<br>
+需要将参数的顺序调换位置，或是增加中间变量。</p>
+<p>还有，编译时请打开-Wall, 编译器会提示你： operation on … may be undefined(未定义行为)。</p>
+
+    </div>
+
+    
+    
+    
+      <div>
+        
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Dong3gold</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://dong3gold.github.io/2019/08/08/%E7%AE%80%E8%B0%88%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%B8%8E%E8%B0%83%E7%94%A8%E4%B8%AD%E7%9A%84%E5%9D%91/" title="简谈函数参数与调用中的坑">https://dong3gold.github.io/2019/08/08/%E7%AE%80%E8%B0%88%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%B8%8E%E8%B0%83%E7%94%A8%E4%B8%AD%E7%9A%84%E5%9D%91/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    <div>
+      
+      <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------　　　　本文结束　<i class="fa fa-heart"></i>　感谢您的阅读　　　　-------------</div>
+    
+</div>
+      
+    </div>
+    <footer class="post-footer">
+          
+        
+        <div class="post-tags">
+            <a href="/tags/%E5%87%BD%E6%95%B0/" rel="tag"># 函数</a>
+          
+            <a href="/tags/C-%E8%AF%AD%E6%B3%95/" rel="tag"># C++语法</a>
+          
+        </div>
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+              <a href="/2019/08/04/Day4-T2-%E5%8D%A1%E7%89%8C%E6%B8%B8%E6%88%8F-%E9%A2%98%E8%A7%A3/" rel="next" title="Day2 T2 卡牌游戏 题解">
+                <i class="fa fa-chevron-left"></i> Day2 T2 卡牌游戏 题解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+              <a href="/2019/10/29/hello-world/" rel="prev" title="Hello World">
+                Hello World <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar.gif"
+      alt="Dong3gold">
+  <p class="site-author-name" itemprop="name">Dong3gold</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/%20%7C%7C%20th">
+          
+        
+        
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/%20%7C%7C%20tags">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/dong3gold" title="GitHub &rarr; https://github.com/dong3gold" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:dong3gold@163.com" title="E-Mail &rarr; mailto:dong3gold@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element links-of-blogroll-block">
+    <div class="links-of-blogroll-title">
+      <i class="fa  fa-fw fa-link"></i>
+      推荐链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.luogu.org" title="http://www.luogu.org" rel="noopener" target="_blank">洛谷</a>
+        </li>
+      
+    </ul>
+  </div>
+
+        </div>
+      </div>
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#简谈函数参数与调用中的坑"><span class="nav-number">1.</span> <span class="nav-text"> 简谈函数参数与调用中的坑</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#引言"><span class="nav-number">1.1.</span> <span class="nav-text"> 引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#堆栈"><span class="nav-number">1.2.</span> <span class="nav-text"> 堆栈</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#同时依据上文有两点是oier常犯的错误"><span class="nav-number">1.2.1.</span> <span class="nav-text"> 同时依据上文，有两点是OIer常犯的错误。</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参数"><span class="nav-number">1.3.</span> <span class="nav-text"> 参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#调用"><span class="nav-number">1.4.</span> <span class="nav-text"> 调用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#表达式求值顺序"><span class="nav-number">1.5.</span> <span class="nav-text"> 表达式求值顺序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">1.6.</span> <span class="nav-text"> 总结</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dong3gold</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.0.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.3.0</div>
+
+        
+
+
+
+
+  <script>
+    (function() {
+      var hm = document.createElement("script");
+      hm.charset = "UTF-8";
+      hm.src = "//tajs.qq.com/stats?sId=66459179";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+        
+      </div>
+    </footer>
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+      </div>
+
+    
+
+  </div>
+
+  
+    
+    
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  <script src="/js/utils.js?v=7.3.0"></script>
+  <script src="/js/motion.js?v=7.3.0"></script>
+
+  
+  <script src="/js/schemes/muse.js?v=7.3.0"></script>
+
+
+  
+  <script src="/js/scrollspy.js?v=7.3.0"></script>
+<script src="/js/post-details.js?v=7.3.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.3.0"></script>
+
+  
+
+  
+
+  
+
+
+  
+
+
+
+  
+    
+      <link rel="stylesheet" href="//cdn.bootcss.com/KaTeX/0.7.1/katex.min.css">
+
+    
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+<script src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+
+<script>
+  var gitalk = new Gitalk({
+    clientID: '44f26230e7627a628c7c',
+    clientSecret: 'a3a0e9d78752b2ca033ae84f2aa20051eef74c1d',
+    repo: 'dong3gold.github.io',
+    owner: 'dong3gold',
+    admin: ['dong3gold'],
+    id: md5(location.pathname),
+      language: 'zh-CN',
+    
+    distractionFreeMode: 'true'
+  });
+  gitalk.render('gitalk-container');
+</script>
+
+
+</body>
+</html>
